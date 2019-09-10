@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.Optional;
 
+import com.example.demo.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,9 @@ public class UserController {
     @Autowired
     private CartRepository cartRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @GetMapping("/id/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
         return ResponseEntity.of(userRepository.findById(id));
@@ -43,6 +47,15 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
         User user = new User();
         user.setUsername(createUserRequest.getUsername());
+        String password = createUserRequest.getPassword();
+        String confirmPassword = createUserRequest.getConfirmPassword();
+        if( password == null ||
+                !password.equals(confirmPassword) ||
+                 password.isEmpty() || password.length() < 8) {
+            return ResponseEntity.badRequest().build();
+        }
+        password = passwordEncoder.encode(password + createUserRequest.getSalt());
+        user.setPassword(password);
         Cart cart = new Cart();
         cartRepository.save(cart);
         user.setCart(cart);
