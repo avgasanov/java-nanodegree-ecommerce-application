@@ -16,9 +16,6 @@ public class CreateUserRequest {
     @JsonProperty
     private String confirmPassword;
 
-    @JsonIgnore
-    private int salt = new Random().nextInt();
-
     public String getUsername() {
         return username;
     }
@@ -43,7 +40,4 @@ public class CreateUserRequest {
         this.confirmPassword = confirmPassword;
     }
 
-    public int getSalt() {
-        return salt;
-    }
 }
