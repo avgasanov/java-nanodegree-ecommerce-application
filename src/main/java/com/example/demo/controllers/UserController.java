@@ -54,7 +54,7 @@ public class UserController {
                  password.isEmpty() || password.length() < 8) {
             return ResponseEntity.badRequest().build();
         }
-        password = passwordEncoder.encode(password + createUserRequest.getSalt());
+        password = passwordEncoder.encode(password);
         user.setPassword(password);
         Cart cart = new Cart();
         cartRepository.save(cart);
