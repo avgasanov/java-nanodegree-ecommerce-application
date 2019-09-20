@@ -34,7 +34,11 @@ public class UserController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
-        return ResponseEntity.of(userRepository.findById(id));
+        if(userRepository.findById(id) == null || !userRepository.findById(id).isPresent()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.of(userRepository.findById(id));
+        }
     }
 
     @GetMapping("/{username}")
