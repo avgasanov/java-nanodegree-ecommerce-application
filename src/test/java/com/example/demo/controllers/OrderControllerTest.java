@@ -10,9 +10,12 @@ import com.example.demo.model.requests.CreateUserRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -60,6 +63,39 @@ public class OrderControllerTest {
         user.setCart(new Cart(1L, new ArrayList<>(), user, BigDecimal.TEN));
         when(userRepository.findByUsername(username)).thenReturn(user);
         final ResponseEntity<UserOrder> response = orderController.submit("wrong-name");
+
+        assertNotNull(response);
+        assertEquals(404, response.getStatusCodeValue());
+    }
+
+    @Test
+    public void getOrdersForUserTest() throws Exception{
+        String username = "some-user";
+        User user = new User();
+        user.setId(1);
+        user.setUsername(username);
+        user.setCart(new Cart(1L, new ArrayList<>(), user, BigDecimal.TEN));
+        when(userRepository.findByUsername(username)).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(new ArrayList<>());
+        final ResponseEntity<List<UserOrder>> response = orderController.getOrdersForUser(username);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        assertEquals(new ArrayList<UserOrder>(), response.getBody());
+    }
+
+    @Test
+    public void getOrdersForBadUserTest() throws Exception{
+        String username = "some-user";
+        User user = new User();
+        user.setId(1);
+        user.setUsername(username);
+        user.setCart(new Cart(1L, new ArrayList<>(), user, BigDecimal.TEN));
+        when(userRepository.findByUsername(username)).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(new ArrayList<>());
+        final ResponseEntity<List<UserOrder>> response =
+                orderController.getOrdersForUser("wrong-name");
 
         assertNotNull(response);
         assertEquals(404, response.getStatusCodeValue());
