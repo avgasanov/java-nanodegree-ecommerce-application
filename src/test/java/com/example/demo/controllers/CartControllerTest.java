@@ -37,23 +37,6 @@ public class CartControllerTest {
         TestUtils.injectObjects(cartController, "cartRepository", cartRepository);
         TestUtils.injectObjects(cartController, "itemRepository", itemRepository);
     }
-//
-//    @PostMapping("/addToCart")
-//    public ResponseEntity<Cart> addTocart(@RequestBody ModifyCartRequest request) {
-//        User user = userRepository.findByUsername(request.getUsername());
-//        if (user == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//        }
-//        Optional<Item> item = itemRepository.findById(request.getItemId());
-//        if (!item.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//        }
-//        Cart cart = user.getCart();
-//        IntStream.range(0, request.getQuantity())
-//                .forEach(i -> cart.addItem(item.get()));
-//        cartRepository.save(cart);
-//        return ResponseEntity.ok(cart);
-//    }
 
     @Test
     public void addTocartTest() {
