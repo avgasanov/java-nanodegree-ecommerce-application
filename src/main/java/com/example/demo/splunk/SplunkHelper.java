@@ -10,12 +10,13 @@ public class SplunkHelper {
 
     private Service service;
     private String eventIndexName;
+    private boolean splunkIsSetUp;
 
     public SplunkHelper(Service service,
                         @Value("${splunk.event.index}") String eventIndexName) {
         this.service = service;
         this.eventIndexName = eventIndexName;
-        service.getReceiver().log("commerceapp-events", "hello splunk");
+        splunkIsSetUp = true;
     }
 
     @Bean
@@ -58,5 +59,9 @@ public class SplunkHelper {
         Args serviceArgs = ServiceArgs.create();
         serviceArgs.put("event-type", "request-failure");
         service.getReceiver().log(eventIndexName, serviceArgs, data);
+    }
+
+    public boolean isSplunkIsSetUp() {
+        return splunkIsSetUp;
     }
 }

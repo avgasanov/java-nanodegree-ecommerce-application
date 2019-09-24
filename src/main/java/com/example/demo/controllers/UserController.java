@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import java.util.Optional;
 
 import com.example.demo.BCryptPasswordEncoder;
+import com.example.demo.splunk.SplunkHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,9 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private SplunkHelper splunkHelper;
+
     @GetMapping("/id/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
         if(userRepository.findById(id) == null || !userRepository.findById(id).isPresent()) {
@@ -56,6 +60,7 @@ public class UserController {
         if( password == null ||
                 !password.equals(confirmPassword) ||
                  password.isEmpty() || password.length() < 8) {
+            splunkHelper.logRequestFailure("Do not meet password requirements in user creation");
             return ResponseEntity.badRequest().build();
         }
         password = passwordEncoder.encode(password);
@@ -64,6 +69,8 @@ public class UserController {
         cartRepository.save(cart);
         user.setCart(cart);
         userRepository.save(user);
+        splunkHelper.logRequestSuccess("User creation request is successful "
+                + user.getUsername());
         return ResponseEntity.ok(user);
     }
 
