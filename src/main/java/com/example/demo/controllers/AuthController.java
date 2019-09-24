@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.AuthenticationRequest;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.splunk.SplunkHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,10 @@ public class AuthController {
     JwtTokenProvider jwtTokenProvider;
     @Autowired
     UserRepository users;
+
+    @Autowired
+    SplunkHelper splunkHelper;
+
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody AuthenticationRequest data) {
         try {
@@ -39,8 +44,10 @@ public class AuthController {
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
             model.put("token", token);
+            splunkHelper.logRequestSuccess("User auth ok: " + username);
             return ok(model);
         } catch (AuthenticationException e) {
+            splunkHelper.logException("Invalid username/password exception");
             throw new BadCredentialsException("Invalid username/password supplied");
         }
     }

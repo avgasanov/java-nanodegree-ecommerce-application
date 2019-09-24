@@ -29,16 +29,20 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private SplunkHelper splunkHelper;
 
 
     @PostMapping("/submit/{username}")
     public ResponseEntity<UserOrder> submit(@PathVariable String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
+            splunkHelper.logRequestFailure("Post order: username is null");
             return ResponseEntity.notFound().build();
         }
         UserOrder order = UserOrder.createFromCart(user.getCart());
         orderRepository.save(order);
+        splunkHelper.logRequestSuccess("Post order: request success");
         return ResponseEntity.ok(order);
     }
 
@@ -46,8 +50,10 @@ public class OrderController {
     public ResponseEntity<List<UserOrder>> getOrdersForUser(@PathVariable String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
+            splunkHelper.logRequestFailure("Get orders: username is null");
             return ResponseEntity.notFound().build();
         }
+        splunkHelper.logRequestSuccess("Get orders: request success");
         return ResponseEntity.ok(orderRepository.findByUser(user));
     }
 }
