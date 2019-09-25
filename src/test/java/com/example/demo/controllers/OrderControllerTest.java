@@ -7,6 +7,7 @@ import com.example.demo.model.persistence.UserOrder;
 import com.example.demo.model.persistence.repositories.OrderRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
+import com.example.demo.splunk.SplunkHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +28,14 @@ public class OrderControllerTest {
     private OrderController orderController;
     private UserRepository userRepository = mock(UserRepository.class);
     private OrderRepository orderRepository = mock(OrderRepository.class);
+    private SplunkHelper splunkHelper = mock(SplunkHelper.class);
 
     @Before
     public void setUp() {
         orderController = new OrderController();
         TestUtils.injectObjects(orderController, "userRepository", userRepository);
         TestUtils.injectObjects(orderController, "orderRepository", orderRepository);
+        TestUtils.injectObjects(orderController, "splunkHelper", splunkHelper);
     }
 
     @Test

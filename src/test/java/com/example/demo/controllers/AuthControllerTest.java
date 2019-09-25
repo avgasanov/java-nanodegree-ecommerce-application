@@ -4,6 +4,7 @@ import com.example.demo.TestUtils;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.AuthenticationRequest;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.splunk.SplunkHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class AuthControllerTest {
     private AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
     private JwtTokenProvider jwtTokenProvider = mock(JwtTokenProvider.class);
     private UserRepository users = mock(UserRepository.class);
+    private SplunkHelper splunkHelper = mock(SplunkHelper.class);
     private AuthController authController = new AuthController();
 
     @Before
@@ -34,6 +36,8 @@ public class AuthControllerTest {
                 authController, "jwtTokenProvider", jwtTokenProvider);
         TestUtils.injectObjects(
                 authController, "users", users);
+        TestUtils.injectObjects(
+                authController, "splunkHelper", splunkHelper);
     }
 
     @Test
@@ -53,6 +57,7 @@ public class AuthControllerTest {
                 .authenticate(any());
         verify(jwtTokenProvider, times(1))
                 .createToken(authenticationRequest.getUsername(), new ArrayList<>());
+        verify(splunkHelper, times(1)).logRequestSuccess(anyString());
     }
 
     @Test(expected = AuthenticationException.class)
@@ -71,6 +76,7 @@ public class AuthControllerTest {
         });
         ResponseEntity<Map<Object,Object>> responseEntity =
                 authController.signin(authenticationRequest);
+        verify(splunkHelper, times(1)).logException(anyString());
     }
 
     private AuthenticationRequest getAuthRequest() {
