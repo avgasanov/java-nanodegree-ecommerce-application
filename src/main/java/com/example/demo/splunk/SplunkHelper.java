@@ -1,26 +1,28 @@
 package com.example.demo.splunk;
 
 import com.splunk.*;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+
+import java.net.ConnectException;
+import java.util.Optional;
 
 @Component
 public class SplunkHelper {
 
     private Service service;
     private String eventIndexName;
-    private boolean splunkIsSetUp;
 
-    public SplunkHelper(Service service,
+    public SplunkHelper(Optional<Service> service,
                         @Value("${splunk.event.index}") String eventIndexName) {
-        this.service = service;
+        this.service = service.orElse(null);
         this.eventIndexName = eventIndexName;
-        splunkIsSetUp = true;
     }
 
     @Bean
-    protected static Service serviceProvider(ServiceArgs serviceArgs,
+    protected static Optional<Service> serviceProvider(ServiceArgs serviceArgs,
                                     @Value("${splunk.host}") String host,
                                     @Value("${splunk.port}") int port,
                                     @Value("${splunk.username}") String username,
@@ -31,7 +33,19 @@ public class SplunkHelper {
         serviceArgs.setPassword(password);
         HttpService.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
         Service.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
-        return Service.connect(serviceArgs);
+        try {
+            return Optional.of(Service.connect(serviceArgs));
+        } catch (RuntimeException e) {
+            if(e.getCause() instanceof ConnectException) {
+                LoggerFactory.getLogger(
+                        SplunkHelper.class
+                                .getName())
+                        .error("Splunk is not available. Unable to connect");
+            } else {
+                throw e;
+            }
+        }
+        return Optional.empty();
     }
 
     @Bean
@@ -44,24 +58,33 @@ public class SplunkHelper {
     }
 
     public void logException(String data) {
+        if(!isSplunkIsSetUp()) {
+            return;
+        }
         Args serviceArgs = ServiceArgs.create();
         serviceArgs.put("sourcetype", "excetiprion");
         service.getReceiver().log(eventIndexName, serviceArgs, data);
     }
 
     public void logRequestSuccess(String data) {
+        if(!isSplunkIsSetUp()) {
+            return;
+        }
         Args serviceArgs = ServiceArgs.create();
         serviceArgs.put("sourcetype", "request-success");
         service.getReceiver().log(eventIndexName, serviceArgs, data);
     }
 
     public void logRequestFailure(String data) {
+        if(!isSplunkIsSetUp()) {
+            return;
+        }
         Args serviceArgs = ServiceArgs.create();
         serviceArgs.put("sourcetype", "request-failure");
         service.getReceiver().log(eventIndexName, serviceArgs, data);
     }
 
     public boolean isSplunkIsSetUp() {
-        return splunkIsSetUp;
+        return service != null;
     }
 }
