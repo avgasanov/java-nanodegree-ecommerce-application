@@ -23,16 +23,16 @@ public class SplunkHelper {
 
     @Bean
     protected static Optional<Service> serviceProvider(ServiceArgs serviceArgs,
-                                    @Value("${splunk.host}") String host,
-                                    @Value("${splunk.port}") int port,
-                                    @Value("${splunk.username}") String username,
-                                    @Value("${splunk.password}") String password) {
+                                                       @Value("${splunk.host}") String host,
+                                                       @Value("${splunk.port}") int port,
+                                                       @Value("${splunk.username}") String username,
+                                                       @Value("${splunk.password}") String password) {
         serviceArgs.setHost(host);
         serviceArgs.setPort(port);
         serviceArgs.setUsername(username);
         serviceArgs.setPassword(password);
-       // HttpService.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
-       // Service.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
+        HttpService.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
+        Service.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
         try {
             return Optional.of(Service.connect(serviceArgs));
         } catch (RuntimeException e) {
