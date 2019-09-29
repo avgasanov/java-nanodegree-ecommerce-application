@@ -14,6 +14,14 @@
     <name>auth-course</name>
     <description>Demo project for Spring Boot</description>
 
+    <repositories>
+        <repository>
+            <id>splunk-artifactory</id>
+            <name>Splunk Releases</name>
+            <url>http://splunk.jfrog.io/splunk/ext-releases-local</url>
+        </repository>
+    </repositories>
+
     <properties>
         <java.version>1.8</java.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
@@ -49,6 +57,11 @@
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.splunk</groupId>
+            <artifactId>splunk</artifactId>
+            <version>1.6.0.0</version>
         </dependency>
         <dependency>
             <groupId>javax.xml.bind</groupId>
