@@ -45,19 +45,19 @@ public class SplunkHelper {
 
     public void logException(String data) {
         Args serviceArgs = ServiceArgs.create();
-        serviceArgs.put("event-type", "excetiprion");
+        serviceArgs.put("sourcetype", "excetiprion");
         service.getReceiver().log(eventIndexName, serviceArgs, data);
     }
 
     public void logRequestSuccess(String data) {
         Args serviceArgs = ServiceArgs.create();
-        serviceArgs.put("event-type", "request-success");
+        serviceArgs.put("sourcetype", "request-success");
         service.getReceiver().log(eventIndexName, serviceArgs, data);
     }
 
     public void logRequestFailure(String data) {
         Args serviceArgs = ServiceArgs.create();
-        serviceArgs.put("event-type", "request-failure");
+        serviceArgs.put("sourcetype", "request-failure");
         service.getReceiver().log(eventIndexName, serviceArgs, data);
     }
 
