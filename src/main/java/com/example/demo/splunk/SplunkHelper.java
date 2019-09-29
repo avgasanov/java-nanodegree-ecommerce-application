@@ -31,7 +31,7 @@ public class SplunkHelper {
         serviceArgs.setPort(port);
         serviceArgs.setUsername(username);
         serviceArgs.setPassword(password);
-        HttpService.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
+       // HttpService.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
        // Service.setSslSecurityProtocol( SSLSecurityProtocol.TLSv1_2 );
         try {
             return Optional.of(Service.connect(serviceArgs));
