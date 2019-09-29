@@ -7,6 +7,7 @@ import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
+import com.example.demo.splunk.SplunkHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class UserControllerTest {
     private UserRepository userRepository = mock(UserRepository.class);
     private CartRepository cartRepository = mock(CartRepository.class);
     private BCryptPasswordEncoder encoder = mock(BCryptPasswordEncoder.class);
+    private SplunkHelper splunkHelper = mock(SplunkHelper.class);
 
     @Before
     public void setUp() {
@@ -31,6 +33,7 @@ public class UserControllerTest {
         TestUtils.injectObjects(userController, "userRepository", userRepository);
         TestUtils.injectObjects(userController, "cartRepository", cartRepository);
         TestUtils.injectObjects(userController, "passwordEncoder", encoder);
+        TestUtils.injectObjects(userController, "splunkHelper", splunkHelper);
     }
 
     @Test
